@@ -1,25 +1,23 @@
 <script>
-  let count = $state(0);
-  let miliseconds = $state(1000);
+  let size = $state(50);
+  let color = $state("#ff3e00");
+
+  let canvas;
 
   $effect(() => {
-    // This will be re-created whenever `miliseconds` changes
-    const interval = setInterval(() => {
-      count += 1;
-    }, miliseconds);
+    const context = canvas.getContext("2d");
+    context.clearRect(0, 0, canvas.width, canvas.height);
 
-    return () => {
-      /**
-       * if a teardown function is provided, it will run
-       * a) immediately before the effect re-runs
-       * b) when the component is destroyed
-       */
-      clearInterval(interval);
-    }
-  })
+    // this will re-run whenever `color` or `size` change
+    context.fillStyle = color;
+
+    setTimeout(() => {
+      // but not when `size` changes
+      context.fillRect(0, 0, size, size);
+    }, 0);
+  });
 </script>
 
-<h1>{count}</h1>
-
-<button onclick={() => miliseconds *= 2}>slower</button>
-<button onclick={() => miliseconds /= 2}>faster</button>
+<canvas bind:this={canvas} width="100" height="100"></canvas>
+<input bind:value={color} onchange={() => color = color}>
+<input type="number" bind:value={size} min="10" max="500" step="20">
