@@ -1,39 +1,29 @@
 <script>
-  let size = $state(50);
-  let color = $state("#ff3e00");
+  let state = $state({ value: 0 });
+  let derived = $derived({ value: state.value * 2 });
 
-  let canvas;
-
+  // this will run once, because `state` is never reassigned
+  // open web console to see the log
   $effect(() => {
-    const context = canvas.getContext("2d");
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    state;
+    console.log("This runs once on mount");
+  })
 
-    // this will re-run whenever `color` or `size` change
-    context.fillStyle = color;
-
-    setTimeout(() => {
-      // but not when `size` changes
-      context.fillRect(0, 0, size, size);
-    }, 0);
-  });
-
-  let width = $state(window.innerWidth);
-
+  // this will run whenever `state.value` changes
   $effect(() => {
-    const handleResize = () => {
-      width = window.innerWidth;
-    };
+    state.value;
+    console.log("State value changed:", state.value);
+  })
 
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  });
+  // and so will this, because `derived` is a new object each time
+  $effect(() => {
+    derived;
+    console.log("Derived changed:", derived.value);
+  })
 </script>
 
-<p>Window width: {width}</p>
+<button onclick={() => state.value += 1}>
+  {state.value}
+</button>
 
-<canvas bind:this={canvas} width="100" height="100"></canvas>
-<input bind:value={color} onchange={() => (color = color)} />
-<input type="number" bind:value={size} min="10" max="500" step="20" />
+<p>{state.value} doubled is {derived.value}.</p>
