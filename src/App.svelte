@@ -1,29 +1,18 @@
 <script>
-  let state = $state({ value: 0 });
-  let derived = $derived({ value: state.value * 2 });
+  import confetti from "canvas-confetti";
 
-  // this will run once, because `state` is never reassigned
-  // open web console to see the log
-  $effect(() => {
-    state;
-    console.log("This runs once on mount");
-  })
+  let condition = $state(false);
+  let color = $state("#ff3e00");
 
-  // this will run whenever `state.value` changes
   $effect(() => {
-    state.value;
-    console.log("State value changed:", state.value);
-  })
-
-  // and so will this, because `derived` is a new object each time
-  $effect(() => {
-    derived;
-    console.log("Derived changed:", derived.value);
-  })
+    // the effect will only re-run again when condition changes.
+    if (condition) {
+      confetti({ colors: [color] });
+    } else {
+      confetti();
+    }
+  });
 </script>
 
-<button onclick={() => state.value += 1}>
-  {state.value}
-</button>
-
-<p>{state.value} doubled is {derived.value}.</p>
+<h2>Click the button to switch confetti colors!</h2>
+<button onclick={() => condition = !condition}>Change Colors</button>
