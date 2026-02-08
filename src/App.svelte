@@ -16,8 +16,24 @@
       context.fillRect(0, 0, size, size);
     }, 0);
   });
+
+  let width = $state(window.innerWidth);
+
+  $effect(() => {
+    const handleResize = () => {
+      width = window.innerWidth;
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  });
 </script>
 
+<p>Window width: {width}</p>
+
 <canvas bind:this={canvas} width="100" height="100"></canvas>
-<input bind:value={color} onchange={() => color = color}>
-<input type="number" bind:value={size} min="10" max="500" step="20">
+<input bind:value={color} onchange={() => (color = color)} />
+<input type="number" bind:value={size} min="10" max="500" step="20" />
